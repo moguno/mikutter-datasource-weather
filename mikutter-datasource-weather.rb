@@ -12,37 +12,49 @@ Plugin.create(:"mikutter-datasource-weather") {
 
   # 都市情報を取得
   def get_places()
-    xml = open("http://weather.livedoor.com/forecast/rss/primary_area.xml") { |fp|
-      fp.read
-    }
-
-    doc = REXML::Document.new(xml)
-
     result = {}
 
-    doc.elements.each("rss/channel/ldWeather:source/pref") { |pref|
-      pref.elements.each("city") { |city|
-        result[city.elements["@id"].value] = "#{pref.elements["@title"].value}/#{city.elements["@title"].value}"
+    begin
+      xml = open("http://weather.livedoor.com/forecast/rss/primary_area.xml") { |fp|
+        fp.read
       }
-    }
+
+      doc = REXML::Document.new(xml)
+
+      doc.elements.each("rss/channel/ldWeather:source/pref") { |pref|
+        pref.elements.each("city") { |city|
+          result[city.elements["@id"].value] = "#{pref.elements["@title"].value}/#{city.elements["@title"].value}"
+        }
+      }
+    rescue => e
+      puts e
+      puts e.backtrace
+    end
 
     result
   end
 
   # 天気予報を取得
   def get_forecast(id)
-    xml = open("http://weather.livedoor.com/forecast/rss/area/#{id}.xml") { |fp|
-      fp.read
-    }
+    begin
+      xml = open("http://weather.livedoor.com/forecast/rss/area/#{id}.xml") { |fp|
+        fp.read
+      }
 
-    doc = REXML::Document.new(xml)
+      doc = REXML::Document.new(xml)
 
-    result = doc.elements.collect("rss/channel/item") { |_| _ }.select { |_| _.elements["day"] }
-      .map { |item|
-      item.elements["description"].text
-    }
+      result = doc.elements.collect("rss/channel/item") { |_| _ }.select { |_| _.elements["day"] }
+        .map { |item|
+        item.elements["description"].text
+      }
 
-    result
+      result
+    rescue => e
+      puts e
+      puts e.backtrace
+
+      []
+    end
   end
 
   # メッセージを組み立てる
