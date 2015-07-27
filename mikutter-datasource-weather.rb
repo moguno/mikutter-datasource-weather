@@ -74,7 +74,7 @@ Plugin.create(:"mikutter-datasource-weather") {
   # データソースを更新する
   def refresh
     Plugin.filtering(:extract_tabs_get, []).first.map { |_|
-      _[:sources].select { |__| __.to_s =~ /^weather_/ }
+      Array(_[:sources]).select { |__| __.to_s =~ /^weather_/ }
     }.flatten.each { |datasource|
       id = datasource.to_s.sub(/^weather_/, "")
 

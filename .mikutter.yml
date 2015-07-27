@@ -4,7 +4,7 @@ depends:
   mikutter: 3.2.0
   plugin:
   - settings
-version: '0.0.2'
+version: '0.0.3'
 author: moguno
 name: mikutter-datasource-weather
 description: livedoorのWeather Hacksを使ってお天気情報を表示するデータソースです。
